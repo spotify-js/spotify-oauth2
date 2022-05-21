@@ -1,0 +1,16 @@
+{
+    "name": "spotify-oauth",
+    "version": "1.0.0",
+    "description": "Spotify wrapper for oauth.",
+    "main": "./src/index.js",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/spotify-js/spotify-oauth2"
+    },
+    "author": "Coltzy <coltzy@hotmail.com>",
+    "license": "Apache-2.0",
+    "devDependencies": {
+        "eslint": "^8.16.0",
+        "prettier": "^2.6.2"
+    }
+}
