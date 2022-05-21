@@ -1,0 +1,9 @@
+# Dev
+.eslintrc.json
+.eslintignore
+.gitignore
+.gitattributes
+.prettierrc.json
+
+# Read Me
+README.md
