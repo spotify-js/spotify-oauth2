@@ -1,5 +1,5 @@
 {
-    "name": "spotify-oauth",
+    "name": "spotify-oauth2",
     "version": "1.0.0",
     "description": "Spotify wrapper for oauth.",
     "main": "./src/index.js",
