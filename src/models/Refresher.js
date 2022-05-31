@@ -1,15 +1,18 @@
+const Events = require('events');
 const fetch = require('node-fetch');
 const qs = require('querystring');
 
 const API = 'https://accounts.spotify.com/api/token?';
 
-class Refresher {
+class Refresher extends Events {
     /**
      * The refresher for requesting Spotify access tokens.
      * @param {string} client_id - The client's id.
      * @param {string} client_secret - The client's secret.
      */
     constructor(client_id, client_secret) {
+        super();
+
         /**
          * The client's id.
          * @type {string}
@@ -51,7 +54,7 @@ class Refresher {
      * @example
      * refresher.request();
      */
-    async request() {
+    request() {
         if (!this.refresh_token) {
             throw new Error('No refresh token was provided during requesting.');
         }
@@ -64,16 +67,22 @@ class Refresher {
         const path = API + options;
         const oauth = btoa(this.client_id + ':' + this.client_secret);
 
-        const response = await fetch(path, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                Authorization: 'Basic ' + oauth,
-            },
-        });
-
-        const body = await response.json();
-        return body;
+        return new Promise((resolve) =>
+            resolve(
+                fetch(path, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        Authorization: 'Basic ' + oauth,
+                    },
+                }).then((response) => {
+                    response.json().then((body) => {
+                        this.emit('token', body);
+                        return body;
+                    });
+                })
+            )
+        );
     }
 }
 
@@ -85,4 +94,10 @@ module.exports = Refresher;
  * @property {string} token_type - The type of token returned.
  * @property {number} expires_in - The time till the access token expires in seconds.
  * @property {string} scope - The scopes the access token has joined via space.
+ */
+
+/**
+ * Emitted when access token is refreshed.
+ * @event Refresher#token
+ * @param {Response} token - The token response from the refresh.
  */
