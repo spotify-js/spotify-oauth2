@@ -68,20 +68,18 @@ class Refresher extends Events {
     const oauth = btoa(this.client_id + ':' + this.client_secret);
 
     return new Promise((resolve) =>
-      resolve(
-        fetch(path, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            Authorization: 'Basic ' + oauth,
-          },
-        }).then((response) => {
-          response.json().then((body) => {
-            this.emit('token', body);
-            return body;
-          });
-        })
-      )
+      fetch(path, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          Authorization: 'Basic ' + oauth,
+        },
+      }).then((response) => {
+        response.json().then((body) => {
+          this.emit('token', body);
+          resolve(body);
+        });
+      })
     );
   }
 }
