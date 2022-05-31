@@ -5,85 +5,85 @@ const qs = require('querystring');
 const API = 'https://accounts.spotify.com/api/token?';
 
 class Refresher extends Events {
-    /**
-     * The refresher for requesting Spotify access tokens.
-     * @param {string} client_id - The client's id.
-     * @param {string} client_secret - The client's secret.
-     */
-    constructor(client_id, client_secret) {
-        super();
-
-        /**
-         * The client's id.
-         * @type {string}
-         */
-        this.client_id = client_id;
-
-        /**
-         * The client's secret.
-         * @type {string}
-         */
-        this.client_secret = client_secret;
-
-        /**
-         * The client's refresh token.
-         * @type {string|null}
-         */
-        this.refresh_token = null;
-    }
+  /**
+   * The refresher for requesting Spotify access tokens.
+   * @param {string} client_id - The client's id.
+   * @param {string} client_secret - The client's secret.
+   */
+  constructor(client_id, client_secret) {
+    super();
 
     /**
-     * Set a property of the Refresher.
-     * @param {string} key - The key of the Refresher to set.
-     * @param {string} value - The value to set to.
-     * @returns {void}
-     * @example
-     * refresher.set('refresh_token', 'xxx');
+     * The client's id.
+     * @type {string}
      */
-    set(key, value) {
-        if (this[key] === undefined) {
-            throw new Error(`${key} is not a key of Refresher.`);
-        }
-
-        this[key] = value;
-    }
+    this.client_id = client_id;
 
     /**
-     * Request an access token for making Spotify requests.
-     * @returns {Response}
-     * @example
-     * refresher.request();
+     * The client's secret.
+     * @type {string}
      */
-    request() {
-        if (!this.refresh_token) {
-            throw new Error('No refresh token was provided during requesting.');
-        }
+    this.client_secret = client_secret;
 
-        const options = qs.stringify({
-            grant_type: 'refresh_token',
-            refresh_token: this.refresh_token,
-        });
+    /**
+     * The client's refresh token.
+     * @type {string|null}
+     */
+    this.refresh_token = null;
+  }
 
-        const path = API + options;
-        const oauth = btoa(this.client_id + ':' + this.client_secret);
-
-        return new Promise((resolve) =>
-            resolve(
-                fetch(path, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        Authorization: 'Basic ' + oauth,
-                    },
-                }).then((response) => {
-                    response.json().then((body) => {
-                        this.emit('token', body);
-                        return body;
-                    });
-                })
-            )
-        );
+  /**
+   * Set a property of the Refresher.
+   * @param {string} key - The key of the Refresher to set.
+   * @param {string} value - The value to set to.
+   * @returns {void}
+   * @example
+   * refresher.set('refresh_token', 'xxx');
+   */
+  set(key, value) {
+    if (this[key] === undefined) {
+      throw new Error(`${key} is not a key of Refresher.`);
     }
+
+    this[key] = value;
+  }
+
+  /**
+   * Request an access token for making Spotify requests.
+   * @returns {Response}
+   * @example
+   * refresher.request();
+   */
+  request() {
+    if (!this.refresh_token) {
+      throw new Error('No refresh token was provided during requesting.');
+    }
+
+    const options = qs.stringify({
+      grant_type: 'refresh_token',
+      refresh_token: this.refresh_token,
+    });
+
+    const path = API + options;
+    const oauth = btoa(this.client_id + ':' + this.client_secret);
+
+    return new Promise((resolve) =>
+      resolve(
+        fetch(path, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            Authorization: 'Basic ' + oauth,
+          },
+        }).then((response) => {
+          response.json().then((body) => {
+            this.emit('token', body);
+            return body;
+          });
+        })
+      )
+    );
+  }
 }
 
 module.exports = Refresher;
